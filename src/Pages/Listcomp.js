@@ -89,6 +89,7 @@ function Listcomp() {
     if (patchres?.set) {
       console.log("did it!");
       await fetchorders();
+      handleClose();
     }
   };
 
