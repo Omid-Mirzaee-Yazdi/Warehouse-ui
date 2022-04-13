@@ -5,7 +5,7 @@ import DataTable from "react-data-table-component";
 import { getData } from "../Func/getData";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import styles from "./Dashboard.module.css";
+import styles from "./Listcomp.module.css";
 import { useTheme } from "@emotion/react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Dialog from "@mui/material/Dialog";
@@ -21,10 +21,6 @@ import { sendSale } from "../Func/sendSale";
 
 const columns = [
   {
-    name: "Id",
-    selector: (row) => row.id,
-  },
-  {
     name: "Product",
     selector: (row) => row.product,
   },
@@ -39,56 +35,58 @@ const columns = [
 ];
 
 function Listcomp() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [maxQuantity, setMaxQuantity] = useState(0);
+  const [maxQuantityValue, setMaxQuantityValue] = useState(0);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState("");
+
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
-    setmaxquantityvalue(0);
-    setselectedProduct("");
+    setMaxQuantityValue(0);
+    setSelectedProduct("");
 
     setOpen(false);
   };
-  const [maxquantity, setmaxquantity] = useState(0);
-  const [maxquantityvalue, setmaxquantityvalue] = useState(0);
-  const [rows, setrows] = useState([]);
-  const [loading, setloading] = useState(true);
-  const fetchorders = () => {
-    setloading(true);
+
+  const fetchOrders = () => {
+    setLoading(true);
+    var parser = new DOMParser();
     getData()
       .then(async (res) => {
-        setrows(res);
+        setRows(res);
       })
       .finally(() => {
-        setloading(false);
+        setLoading(false);
       });
   };
 
   useEffect(() => {
-    fetchorders();
+    fetchOrders();
   }, []);
 
-  const [selectedProduct, setselectedProduct] = React.useState("");
-
   const handleChange = (event) => {
-    setselectedProduct(event.target.value);
-    setmaxquantity(
+    setSelectedProduct(event.target.value);
+    setMaxQuantity(
       rows.filter((item) => item.id === event.target.value)[0].quantity
     );
-    setmaxquantityvalue(0);
+    setMaxQuantityValue(0);
   };
 
   const quantityChange = (e) => {
-    setmaxquantityvalue(e.target.value);
+    setMaxQuantityValue(e.target.value);
   };
 
   const submitSale = async () => {
-    await setloading(true);
-    const patchres = await sendSale(selectedProduct, maxquantityvalue);
+    setLoading(true);
+    const patchres = await sendSale(selectedProduct, maxQuantityValue);
     if (patchres?.set) {
       console.log("did it!");
-      await fetchorders();
+      await fetchOrders();
       handleClose();
     }
   };
@@ -100,7 +98,7 @@ function Listcomp() {
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="responsive-dialog-title">{"Add a sale"}</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">Add a sale</DialogTitle>
         <DialogContent>
           <DialogContentText style={{ width: "200px" }}>
             <FormControl
@@ -129,8 +127,8 @@ function Listcomp() {
               variant="outlined"
               type="number"
               onChange={quantityChange}
-              value={maxquantityvalue}
-              InputProps={{ inputProps: { min: 0, max: maxquantity } }}
+              value={maxQuantityValue}
+              InputProps={{ inputProps: { min: 0, max: maxQuantity } }}
             />
           </DialogContentText>
         </DialogContent>
@@ -139,7 +137,7 @@ function Listcomp() {
             Cancel
           </Button>
           <Button
-            disabled={maxquantityvalue === 0 || !selectedProduct}
+            disabled={maxQuantityValue === 0 || !selectedProduct}
             onClick={submitSale}
           >
             Submit

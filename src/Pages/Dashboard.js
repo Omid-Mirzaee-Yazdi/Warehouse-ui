@@ -16,11 +16,11 @@ import { Link } from "react-router-dom";
 import { CarCrashRounded, ListRounded } from "@mui/icons-material";
 import { Route } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
-import Listcomp from "./Listcomp";
-
+import Listcomp from "../Components/Listcomp";
+import { routes } from "../Func/routes";
 const drawerWidth = 240;
 
-function Dashboard() {
+const Dashboard = () => {
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -46,21 +46,12 @@ function Dashboard() {
           <Toolbar />
           <Box sx={{ overflow: "auto" }}>
             <List>
-              <Link to="/dashboard/list">
+              <Link to={routes.dashboardList}>
                 <ListItem button key="List">
                   <ListItemIcon>
                     <ListRounded />
                   </ListItemIcon>
                   <ListItemText primary="List" />
-                </ListItem>
-              </Link>
-              <Link to="/dashboard/beep">
-                <ListItem button key="beep">
-                  <ListItemIcon>
-                    <CarCrashRounded />
-                  </ListItemIcon>
-
-                  <ListItemText primary="beep" />
                 </ListItem>
               </Link>
             </List>
@@ -69,7 +60,7 @@ function Dashboard() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
 
-          <Route path={`/dashboard/list`}>
+          <Route path={routes.dashboardList}>
             {({ match }) => (
               <CSSTransition
                 in={match != null}
@@ -87,6 +78,6 @@ function Dashboard() {
       </Box>
     </>
   );
-}
+};
 
 export default Dashboard;

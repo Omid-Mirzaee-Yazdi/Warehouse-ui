@@ -40,7 +40,7 @@ const submitsale = async (id, quantity) => {
     });
   return result;
 };
-const substractfromstock = async (id, quantity) => {
+const subTractFromStock = async (id, quantity) => {
   const requestOptions = {
     method: "PATCH",
     headers: {
@@ -68,20 +68,20 @@ const substractfromstock = async (id, quantity) => {
   return result;
 };
 
-export const sendSale = async (productid, quantity) => {
-  let product = await fetchProduct(productid);
+export const sendSale = async (productId, quantity) => {
+  let product = await fetchProduct(productId);
   do {
-    product = await fetchProduct(productid);
+    product = await fetchProduct(productId);
   } while (product.error);
-  let ressale = { error: true };
+  let resSale = { error: true };
   do {
-    ressale = await submitsale(product.id, quantity);
-  } while (ressale.error);
+    resSale = await submitsale(product.id, quantity);
+  } while (resSale.error);
 
   await product.articles.forEach(async (article) => {
     let res = { error: true };
     do {
-      res = await substractfromstock(
+      res = await subTractFromStock(
         article.id,
         quantity * article.amountRequired
       );

@@ -15,7 +15,7 @@ const fetchProduct = async () => {
     });
   return result;
 };
-const fetcharticle = async () => {
+const fetchArticle = async () => {
   const result = await fetch("http://localhost:7000/articles", {
     methos: "GET",
   })
@@ -34,44 +34,42 @@ const fetcharticle = async () => {
   return result;
 };
 
-const getarticles = async (product, articles) => {
+const getArticles = async (product, articles) => {
   const tempnamedarticles = [];
   await product.articles.forEach(async (article) => {
-    const selectedarticle = articles.filter(
+    const selectedArticle = articles.filter(
       (item) => item.id === article.id
     )[0];
 
-    tempnamedarticles.push(
-      `N:${selectedarticle.name} Q:${article.amountRequired}`
-    );
+    tempnamedarticles.push(`${selectedArticle.name}`);
   });
-  return tempnamedarticles.join(", ");
+  return tempnamedarticles.join(",");
 };
 
 const calcQuantity = async (product, articles) => {
-  const tempquantities = [];
+  const tempQuantities = [];
   await product.articles.forEach(async (article) => {
-    const selectedarticle = articles.filter(
+    const selectedArticle = articles.filter(
       (item) => item.id === article.id
     )[0];
-    tempquantities.push(
-      Math.floor(selectedarticle.amountInStock / article.amountRequired)
+    tempQuantities.push(
+      Math.floor(selectedArticle.amountInStock / article.amountRequired)
     );
   });
-  return Math.min(...tempquantities);
+  return Math.min(...tempQuantities);
 };
 
 const ConstructObj = async (products, articles) => {
-  const tempresult = [];
-  await products.forEach(async (product) => {
-    await tempresult.push({
+  const tempResult = [];
+  products.forEach(async (product) => {
+    await tempResult.push({
       id: product.id,
       product: product.name,
       quantity: await calcQuantity(product, articles),
-      articles: await getarticles(product, articles),
+      articles: await getArticles(product, articles),
     });
   });
-  return tempresult;
+  return tempResult;
 };
 
 export const getData = async () => {
@@ -80,10 +78,10 @@ export const getData = async () => {
     ProductRes = await fetchProduct();
   } while (ProductRes.error);
 
-  let ArticleRes = await fetcharticle();
+  let ArticleRes = await fetchArticle();
 
   do {
-    ArticleRes = await fetcharticle();
+    ArticleRes = await fetchArticle();
   } while (ArticleRes.error);
 
   const constructedObject = await ConstructObj(ProductRes, ArticleRes);

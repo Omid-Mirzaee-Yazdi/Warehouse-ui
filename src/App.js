@@ -15,26 +15,27 @@ import {
   Redirect,
 } from "react-router-dom";
 import Dashboard from "./Pages/Dashboard";
+import { routes } from "./Func/routes";
 
-function App() {
+const App = () => {
   return (
     <div className="App">
       <Router>
         <Switch>
-          <Route path="/login">
+          <Route path={routes.login}>
             <h1>LOGIN </h1>;
           </Route>
-          <Route path="/dashboard">
+          <Route path={routes.dashboard}>
             <Dashboard />
           </Route>
 
-          <Route path="/">
-            <Redirect to="/dashboard" />
+          <Route path={routes.base}>
+            <Redirect to={routes.dashboard} />
           </Route>
         </Switch>
       </Router>
     </div>
   );
-}
+};
 
 export default App;
